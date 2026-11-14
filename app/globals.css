@@ -392,8 +392,9 @@
 .tradingview-widget-container {
   position: relative;
   background-color: #141414 !important;
-  border-radius: 8px !important;
+  border-radius: 32px !important;
   overflow: hidden !important;
+  padding: 8px;
 }
 
 .tv-embed-widget-wrapper__body {
