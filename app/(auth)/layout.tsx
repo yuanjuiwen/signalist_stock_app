@@ -1,8 +1,19 @@
 import Link from 'next/link'  
 import Image from 'next/image';
 import React from 'react'
+import { auth } from '@/lib/better-auth/auth'
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = async ({ children }: { children: React.ReactNode }) => {
+
+  const session = await auth.api.getSession({
+      headers: await headers(),
+    })
+  
+    if (session?.user) redirect('/');
+
+
   return (
     <main className="auth-layout">
 
@@ -35,7 +46,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                         ))}
                     </div>
                 </div>
-                
+
             </div>
 
             {/* 照片區塊 */}
