@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { LogOut } from 'lucide-react'
 import Navitems from './Navitems'
-import { signOut } from 'better-auth/api'
+import { signOut } from '@/lib/actions/auth.action'
 
 
 

@@ -3,6 +3,7 @@
 
 import { auth } from "@/lib/better-auth/auth";
 import {inngest} from "@/lib/inngest/client";
+import { checkSignInLimits } from "@/lib/auth-rate-limit";
 import { headers } from "next/headers";
 
 export const signUpWithEmail = async ( { email, password, fullName, country, investmentGoals, riskTolerance, preferredIndustry }: SignUpFormData) => {
@@ -11,11 +12,14 @@ export const signUpWithEmail = async ( { email, password, fullName, country, inv
        const response = await auth.api.signUpEmail({ body: { email, password, name: fullName } })
 
         if(response) {
-            await inngest.send({
-                name: 'app/user.created',
-                 data: { email, name: fullName, country, investmentGoals, riskTolerance, preferredIndustry }
-
-            })
+            try {
+                await inngest.send({
+                    name: 'app/user.created',
+                    data: { email, name: fullName, country, investmentGoals, riskTolerance, preferredIndustry }
+                })
+            } catch {
+                console.error('Welcome event delivery failed after successful signup');
+            }
         }
 
         return { success: true, data: response }
@@ -37,8 +41,11 @@ export const signOut = async () => {
 
 export const signInWithEmail = async ( { email, password}: SignInFormData) => {
     try{
-        //call better Auth
-       const response = await auth.api.signInEmail({ body: { email, password } })
+        const requestHeaders = await headers();
+        if (!(await checkSignInLimits(requestHeaders, email))) {
+            return { success: false, error: 'Too many sign-in attempts. Please try again later.' };
+        }
+        const response = await auth.api.signInEmail({ body: { email, password }, headers: requestHeaders })
 
       
 
