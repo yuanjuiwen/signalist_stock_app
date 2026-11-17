@@ -3,6 +3,7 @@ import React from 'react'
 import { auth } from '@/lib/better-auth/auth'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+export const instant = false;
 
 const layout = async ({children}:{children : React.ReactNode}) => {
 
